@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>使用 CSS 实现高级动画效果 - 我的博客</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="../js/background.js"></script>
+    <script src="../js/transition.js"></script>
+    <link rel="stylesheet" href="./article-template.css">
+</head>
+<body>
+    <div class="transition-overlay"></div>
+    <a href="../blog.html" class="back-btn">返回博客列表</a>
+    
+    <article class="article-container">
+        <header class="article-header">
+            <h1 class="article-title">使用 CSS 实现高级动画效果</h1>
+            <div class="article-meta">
+                <span><i class="far fa-calendar"></i> 2024-01-15</span>
+                <span><i class="far fa-clock"></i> 15分钟阅读</span>
+                <span><i class="far fa-folder"></i> CSS 动画</span>
+            </div>
+        </header>
+        
+        <div class="article-content-wrapper">
+            <div class="article-content">
+                <h2>引言</h2>
+                <p>在现代网页设计中，动画效果不仅能够提升用户体验，还能够有效地引导用户注意力。本文将深入探讨如何使用纯 CSS 实现各种高级动画效果，从基础概念到实际应用，帮助你掌握 CSS 动画的精髓。</p>
+
+                <h2>1. CSS 动画的基础概念</h2>
+                <p>CSS 动画主要通过两种方式实现：transition 和 animation。</p>
+                <pre><code>/* 使用 transition */
+.element {
+    transition: all 0.3s ease;
+}
+
+/* 使用 animation */
+.element {
+    animation: slide-in 0.5s ease forwards;
+}
+
+@keyframes slide-in {
+    from { transform: translateX(-100%); }
+    to { transform: translateX(0); }
+}</code></pre>
+
+                <h2>2. Transform 变换</h2>
+                <p>transform 属性是实现视觉效果的强大工具，它包括：</p>
+                <ul>
+                    <li>scale（缩放）</li>
+                    <li>rotate（旋转）</li>
+                    <li>translate（平移）</li>
+                    <li>skew（倾斜）</li>
+                </ul>
+
+                <h2>3. 3D 转换效果</h2>
+                <p>CSS 3D 转换允许我们创建具有深度感的动画效果：</p>
+                <pre><code>.card {
+    transform-style: preserve-3d;
+    transition: transform 0.6s;
+}
+
+.card:hover {
+    transform: rotateY(180deg);
+}</code></pre>
+
+                <h2>4. 性能优化</h2>
+                <blockquote>
+                    <p>在实现动画时，性能是一个重要的考虑因素。我们应该优先使用 transform 和 opacity 属性，避免触发页面重排。</p>
+                </blockquote>
+
+                <h2>5. 实际应用示例</h2>
+                <p>以下是一些常见的动画效果实现：</p>
+                <pre><code>/* 淡入效果 */
+.fade-in {
+    animation: fadeIn 0.5s ease forwards;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* 弹性动画 */
+.bounce {
+    animation: bounce 0.5s cubic-bezier(0.36, 0, 0.66, -0.56) forwards;
+}
+
+@keyframes bounce {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.2); }
+}</code></pre>
+
+                <h2>6. 最佳实践</h2>
+                <p>在实际项目中实现动画效果时，应该注意以下几点：</p>
+                <ul>
+                    <li>确保动画增强而不是干扰用户体验</li>
+                    <li>考虑用户的无动画偏好设置</li>
+                    <li>保持动画时长适中（通常在 200-500ms 之间）</li>
+                    <li>使用适当的缓动函数</li>
+                </ul>
+            </div>
+        </div>
+    </article>
+
+    <script>
+        BackgroundManager.init({
+            duration: 30,
+            blur: 0.5,
+            opacity: 1
+        });
+    </script>
+</body>
+</html> 

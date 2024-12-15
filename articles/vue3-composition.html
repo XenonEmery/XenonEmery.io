@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vue3 组合式 API 实战指南 - 我的博客</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="../js/background.js"></script>
+    <script src="../js/transition.js"></script>
+    <link rel="stylesheet" href="./article-template.css">
+</head>
+<body>
+    <div class="transition-overlay"></div>
+    <a href="../blog.html" class="back-btn">返回博客列表</a>
+    
+    <article class="article-container">
+        <header class="article-header">
+            <h1 class="article-title">Vue3 组合式 API 实战指南</h1>
+            <div class="article-meta">
+                <span><i class="far fa-calendar"></i> 2024-02-10</span>
+                <span><i class="far fa-clock"></i> 20分钟阅读</span>
+                <span><i class="far fa-folder"></i> Vue3</span>
+            </div>
+        </header>
+        
+        <div class="article-content-wrapper">
+            <div class="article-content">
+                <h2>引言</h2>
+                <p>Vue3 的组合式 API 为我们提供了更灵活的组件逻辑组织方式。本文将深入探讨如何使用组合式 API 构建高质量的 Vue 应用。</p>
+
+                <h2>1. setup 函数基础</h2>
+                <pre><code>// 基础示例
+import { ref, onMounted } from 'vue';
+
+export default {
+    setup() {
+        const count = ref(0);
+        const message = ref('Hello Vue3');
+
+        function increment() {
+            count.value++;
+        }
+
+        onMounted(() => {
+            console.log('组件已挂载');
+        });
+
+        return {
+            count,
+            message,
+            increment
+        };
+    }
+}</code></pre>
+
+                <h2>2. 响应式系统</h2>
+                <blockquote>
+                    <p>Vue3 的响应式系统基于 Proxy，提供了更强大的响应式能力。</p>
+                </blockquote>
+
+                <pre><code>// 响应式 API 示例
+import { ref, reactive, computed, watch } from 'vue';
+
+export default {
+    setup() {
+        const user = reactive({
+            name: 'John',
+            age: 25
+        });
+
+        const doubleAge = computed(() => user.age * 2);
+
+        watch(() => user.age, (newVal, oldVal) => {
+            console.log(`年龄从 ${oldVal} 变为 ${newVal}`);
+        });
+
+        return {
+            user,
+            doubleAge
+        };
+    }
+}</code></pre>
+
+                <h2>3. 生命周期钩子</h2>
+                <p>组合式 API 中的生命周期钩子：</p>
+                <pre><code>import {
+    onBeforeMount,
+    onMounted,
+    onBeforeUpdate,
+    onUpdated,
+    onBeforeUnmount,
+    onUnmounted
+} from 'vue';
+
+export default {
+    setup() {
+        onBeforeMount(() => {
+            console.log('组件即将挂载');
+        });
+
+        onMounted(() => {
+            console.log('组件已挂载');
+        });
+
+        // 其他生命周期钩子...
+    }
+}</code></pre>
+
+                <h2>4. 自定义组合式函数</h2>
+                <p>封装和复用组件逻辑：</p>
+                <pre><code>// useCounter.js
+import { ref, computed } from 'vue';
+
+export function useCounter(initialValue = 0) {
+    const count = ref(initialValue);
+    const double = computed(() => count.value * 2);
+
+    function increment() {
+        count.value++;
+    }
+
+    function decrement() {
+        count.value--;
+    }
+
+    return {
+        count,
+        double,
+        increment,
+        decrement
+    };
+}
+
+// 使用示例
+import { useCounter } from './composables/useCounter';
+
+export default {
+    setup() {
+        const { count, double, increment } = useCounter(10);
+        return { count, double, increment };
+    }
+}</code></pre>
+
+                <h2>5. 依赖注入</h2>
+                <pre><code>// 提供数据
+import { provide, ref } from 'vue';
+
+export default {
+    setup() {
+        const theme = ref('dark');
+        provide('theme', theme);
+    }
+}
+
+// 注入数据
+import { inject } from 'vue';
+
+export default {
+    setup() {
+        const theme = inject('theme', 'light'); // 提供默认值
+        return { theme };
+    }
+}</code></pre>
+
+                <h2>6. 最佳实践</h2>
+                <ul>
+                    <li>合理拆分组合式函数</li>
+                    <li>使用 TypeScript 增强类型安全</li>
+                    <li>保持响应式引用的一致性</li>
+                    <li>注意性能优化</li>
+                    <li>合理使用异步组件</li>
+                    <li>做好错误处理</li>
+                </ul>
+            </div>
+        </div>
+    </article>
+
+    <script>
+        BackgroundManager.init({
+            duration: 30,
+            blur: 0.5,
+            opacity: 1
+        });
+    </script>
+</body>
+</html> 

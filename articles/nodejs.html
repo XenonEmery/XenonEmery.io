@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Node.js 性能调优实战 - 我的博客</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="../js/background.js"></script>
+    <script src="../js/transition.js"></script>
+    <link rel="stylesheet" href="./article-template.css">
+</head>
+<body>
+    <div class="transition-overlay"></div>
+    <a href="../blog.html" class="back-btn">返回博客列表</a>
+    
+    <article class="article-container">
+        <header class="article-header">
+            <h1 class="article-title">Node.js 性能调优实战</h1>
+            <div class="article-meta">
+                <span><i class="far fa-calendar"></i> 2024-02-25</span>
+                <span><i class="far fa-clock"></i> 25分钟阅读</span>
+                <span><i class="far fa-folder"></i> Node.js</span>
+            </div>
+        </header>
+        
+        <div class="article-content-wrapper">
+            <div class="article-content">
+                <h2>引言</h2>
+                <p>Node.js 性能优化是构建高性能服务的关键。本文将深入探讨 Node.js 性能调优的各个方面，包括内存管理、异步I/O和集群部署。</p>
+
+                <h2>1. 内存管理优化</h2>
+                <pre><code>// 内存泄漏检测
+const heapdump = require('heapdump');
+const memwatch = require('memwatch-next');
+
+memwatch.on('leak', (info) => {
+    console.log('Memory leak detected:', info);
+    heapdump.writeSnapshot(`./heapdump-${Date.now()}.heapsnapshot`);
+});
+
+// 内存使用监控
+const used = process.memoryUsage();
+console.log(`Memory usage: 
+    heapTotal: ${used.heapTotal / 1024 / 1024} MB
+    heapUsed: ${used.heapUsed / 1024 / 1024} MB
+    external: ${used.external / 1024 / 1024} MB
+    rss: ${used.rss / 1024 / 1024} MB`);</code></pre>
+
+                <h2>2. 异步I/O优化</h2>
+                <blockquote>
+                    <p>合理使用异步I/O可以显著提升应用性能。</p>
+                </blockquote>
+
+                <pre><code>// 文件操作优化
+const fs = require('fs').promises;
+const stream = require('stream');
+const util = require('util');
+const pipeline = util.promisify(stream.pipeline);
+
+async function processLargeFile(inputFile, outputFile) {
+    const readStream = fs.createReadStream(inputFile);
+    const writeStream = fs.createWriteStream(outputFile);
+    const transformStream = new stream.Transform({
+        transform(chunk, encoding, callback) {
+            // 处理数据
+            const processed = processData(chunk);
+            callback(null, processed);
+        }
+    });
+
+    try {
+        await pipeline(readStream, transformStream, writeStream);
+        console.log('File processing completed');
+    } catch (error) {
+        console.error('Pipeline failed', error);
+    }
+}</code></pre>
+
+                <h2>3. 集群部署</h2>
+                <p>使用集群模式充分利用多核CPU：</p>
+                <pre><code>// cluster.js
+const cluster = require('cluster');
+const numCPUs = require('os').cpus().length;
+const express = require('express');
+
+if (cluster.isMaster) {
+    console.log(`Master ${process.pid} is running`);
+
+    // 启动工作进程
+    for (let i = 0; i < numCPUs; i++) {
+        cluster.fork();
+    }
+
+    cluster.on('exit', (worker, code, signal) => {
+        console.log(`Worker ${worker.process.pid} died`);
+        // 重启工作进程
+        cluster.fork();
+    });
+} else {
+    const app = express();
+    app.listen(3000);
+    console.log(`Worker ${process.pid} started`);
+}</code></pre>
+
+                <h2>4. 性能监控</h2>
+                <pre><code>// 性能监控实现
+const { performance, PerformanceObserver } = require('perf_hooks');
+
+// 创建性能观察器
+const obs = new PerformanceObserver((list) => {
+    const entries = list.getEntries();
+    entries.forEach((entry) => {
+        console.log(`${entry.name}: ${entry.duration}`);
+    });
+});
+obs.observe({ entryTypes: ['measure'], buffered: true });
+
+// 测量函数执行时间
+async function measureOperation() {
+    performance.mark('A');
+    await someOperation();
+    performance.mark('B');
+    performance.measure('Operation Duration', 'A', 'B');
+}</code></pre>
+
+                <h2>5. 数据库优化</h2>
+                <pre><code>// MongoDB 连接池优化
+const mongoose = require('mongoose');
+
+mongoose.connect('mongodb://localhost/test', {
+    poolSize: 10,
+    bufferMaxEntries: 0,
+    useNewUrlParser: true,
+    useUnifiedTopology: true
+});
+
+// 查询优化
+const User = mongoose.model('User');
+
+async function optimizedQuery() {
+    return User.find({ active: true })
+        .select('name email')
+        .limit(100)
+        .lean()
+        .exec();
+}</code></pre>
+
+                <h2>6. 最佳实践</h2>
+                <ul>
+                    <li>使用流处理大文件</li>
+                    <li>实施缓存策略</li>
+                    <li>优化垃圾回收</li>
+                    <li>合理使用缓冲区</li>
+                    <li>错误处理和日志</li>
+                    <li>负载均衡策略</li>
+                </ul>
+
+                <pre><code>// 缓存实现示例
+const NodeCache = require('node-cache');
+const cache = new NodeCache({ stdTTL: 100 });
+
+async function getCachedData(key) {
+    const value = cache.get(key);
+    if (value) {
+        return value;
+    }
+    
+    const data = await fetchDataFromDB(key);
+    cache.set(key, data);
+    return data;
+}</code></pre>
+            </div>
+        </div>
+    </article>
+
+    <script>
+        BackgroundManager.init({
+            duration: 30,
+            blur: 0.5,
+            opacity: 1
+        });
+    </script>
+</body>
+</html> 

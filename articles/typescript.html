@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TypeScript 高级类型编程 - 我的博客</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="../js/background.js"></script>
+    <script src="../js/transition.js"></script>
+    <link rel="stylesheet" href="./article-template.css">
+</head>
+<body>
+    <div class="transition-overlay"></div>
+    <a href="../blog.html" class="back-btn">返回博客列表</a>
+    
+    <article class="article-container">
+        <header class="article-header">
+            <h1 class="article-title">TypeScript 高级类型编程</h1>
+            <div class="article-meta">
+                <span><i class="far fa-calendar"></i> 2024-02-15</span>
+                <span><i class="far fa-clock"></i> 25分钟阅读</span>
+                <span><i class="far fa-folder"></i> TypeScript</span>
+            </div>
+        </header>
+        
+        <div class="article-content-wrapper">
+            <div class="article-content">
+                <h2>引言</h2>
+                <p>TypeScript 的类型系统非常强大，通过类型编程可以实现复杂的类型推导和转换。本文将深入探讨 TypeScript 的高级类型特性。</p>
+
+                <h2>1. 泛型基础</h2>
+                <pre><code>// 泛型函数
+function identity&lt;T&gt;(arg: T): T {
+    return arg;
+}
+
+// 泛型接口
+interface Container&lt;T&gt; {
+    value: T;
+    getValue(): T;
+}
+
+// 泛型类
+class Stack&lt;T&gt; {
+    private items: T[] = [];
+    
+    push(item: T) {
+        this.items.push(item);
+    }
+    
+    pop(): T | undefined {
+        return this.items.pop();
+    }
+}</code></pre>
+
+                <h2>2. 条件类型</h2>
+                <blockquote>
+                    <p>条件类型允许我们根据类型关系进行类型选择。</p>
+                </blockquote>
+
+                <pre><code>// 条件类型示例
+type IsString&lt;T&gt; = T extends string ? true : false;
+
+type StringCheck = IsString&lt;'hello'&gt;; // true
+type NumberCheck = IsString&lt;123&gt;; // false
+
+// 分布式条件类型
+type ToArray&lt;T&gt; = T extends any ? T[] : never;
+type StrNumArr = ToArray&lt;string | number&gt;; // string[] | number[]</code></pre>
+
+                <h2>3. 映射类型</h2>
+                <p>使用映射类型转换已有类型：</p>
+                <pre><code>// 基础映射类型
+type Readonly&lt;T&gt; = {
+    readonly [P in keyof T]: T[P];
+};
+
+type Partial&lt;T&gt; = {
+    [P in keyof T]?: T[P];
+};
+
+// 实际应用
+interface User {
+    name: string;
+    age: number;
+}
+
+type ReadonlyUser = Readonly&lt;User&gt;;
+type PartialUser = Partial&lt;User&gt;;</code></pre>
+
+                <h2>4. 高级类型工具</h2>
+                <pre><code>// Pick 和 Omit
+type Pick&lt;T, K extends keyof T&gt; = {
+    [P in K]: T[P];
+};
+
+type Omit&lt;T, K extends keyof any&gt; = Pick&lt;T, Exclude&lt;keyof T, K&gt;&gt;;
+
+// Record 类型
+type Record&lt;K extends keyof any, T&gt; = {
+    [P in K]: T;
+};
+
+// 实际使用
+type UserRoles = Record&lt;'admin' | 'user' | 'guest', string&gt;;</code></pre>
+
+                <h2>5. 类型推导和推断</h2>
+                <pre><code>// infer 关键字使用
+type ReturnType&lt;T&gt; = T extends (...args: any[]) => infer R ? R : any;
+
+type GetFirstArg&lt;T&gt; = T extends (first: infer F, ...args: any[]) => any ? F : never;
+
+// 实际应用
+function add(a: number, b: number): number {
+    return a + b;
+}
+
+type AddReturn = ReturnType&lt;typeof add&gt;; // number
+type FirstArg = GetFirstArg&lt;typeof add&gt;; // number</code></pre>
+
+                <h2>6. 实用技巧</h2>
+                <ul>
+                    <li>联合类型转交叉类型</li>
+                    <li>递归类型定义</li>
+                    <li>类型守卫</li>
+                    <li>模板字面量类型</li>
+                    <li>类型断言</li>
+                </ul>
+
+                <pre><code>// 高级类型技巧示例
+// 联合转交叉
+type UnionToIntersection&lt;U&gt; = 
+    (U extends any ? (k: U) => void : never) extends ((k: infer I) => void) ? I : never;
+
+// 字符串模板类型
+type EventName&lt;T extends string&gt; = `${T}Changed`;
+type UserEvents = EventName&lt;'name' | 'age'&gt;; // 'nameChanged' | 'ageChanged'</code></pre>
+            </div>
+        </div>
+    </article>
+
+    <script>
+        BackgroundManager.init({
+            duration: 30,
+            blur: 0.5,
+            opacity: 1
+        });
+    </script>
+</body>
+</html> 

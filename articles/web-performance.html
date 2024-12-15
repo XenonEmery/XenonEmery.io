@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web 性能优化实战指南 - 我的博客</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="../js/background.js"></script>
+    <script src="../js/transition.js"></script>
+    <link rel="stylesheet" href="./article-template.css">
+</head>
+<body>
+    <div class="transition-overlay"></div>
+    <a href="../blog.html" class="back-btn">返回博客列表</a>
+    
+    <article class="article-container">
+        <header class="article-header">
+            <h1 class="article-title">Web 性能优化实战指南</h1>
+            <div class="article-meta">
+                <span><i class="far fa-calendar"></i> 2024-01-30</span>
+                <span><i class="far fa-clock"></i> 18分钟阅读</span>
+                <span><i class="far fa-folder"></i> 性能优化</span>
+            </div>
+        </header>
+        
+        <div class="article-content-wrapper">
+            <div class="article-content">
+                <h2>引言</h2>
+                <p>Web 性能优化是前端开发中的重要课题。本文将从多个角度探讨如何提升网站性能，包括加载速度、运行时性能和用户体验。</p>
+
+                <h2>1. 资源加载优化</h2>
+                <h3>1.1 图片优化</h3>
+                <pre><code>// 使用现代图片格式
+&lt;picture&gt;
+    &lt;source srcset="image.webp" type="image/webp"&gt;
+    &lt;source srcset="image.jpg" type="image/jpeg"&gt;
+    &lt;img src="image.jpg" alt="优化的图片" loading="lazy"&gt;
+&lt;/picture&gt;
+
+// 使用响应式图片
+&lt;img 
+    srcset="small.jpg 300w,
+            medium.jpg 600w,
+            large.jpg 900w"
+    sizes="(max-width: 320px) 280px,
+           (max-width: 640px) 580px,
+           880px"
+    src="large.jpg" 
+    alt="响应式图片"&gt;</code></pre>
+
+                <h3>1.2 JavaScript 优化</h3>
+                <pre><code>// 代码分割示例
+const MyComponent = React.lazy(() => import('./MyComponent'));
+
+// 预加载关键资源
+&lt;link rel="preload" href="critical.js" as="script"&gt;
+&lt;link rel="preload" href="critical.css" as="style"&gt;</code></pre>
+
+                <h2>2. 渲染性能优化</h2>
+                <blockquote>
+                    <p>优化关键渲染路径可以显著提升页面的首次渲染速度。</p>
+                </blockquote>
+
+                <pre><code>// 避免布局抖动
+function optimizedAnimation() {
+    requestAnimationFrame(() => {
+        const element = document.querySelector('.target');
+        const currentHeight = element.offsetHeight;
+        
+        // 批量读取
+        const measurements = elements.map(el => ({
+            height: el.offsetHeight,
+            width: el.offsetWidth
+        }));
+        
+        // 批量写入
+        measurements.forEach(m => {
+            el.style.height = `${m.height * 2}px`;
+            el.style.width = `${m.width * 2}px`;
+        });
+    });
+}</code></pre>
+
+                <h2>3. 缓存策略</h2>
+                <p>合理的缓存策略对性能提升至关重要：</p>
+                <pre><code>// Service Worker 缓存示例
+self.addEventListener('install', event => {
+    event.waitUntil(
+        caches.open('v1').then(cache => {
+            return cache.addAll([
+                '/',
+                '/styles/main.css',
+                '/scripts/main.js',
+                '/images/logo.png'
+            ]);
+        })
+    );
+});</code></pre>
+
+                <h2>4. 性能监控</h2>
+                <p>使用性能监控工具收集实际用户数据：</p>
+                <pre><code>// Performance API 使用示例
+const observer = new PerformanceObserver((list) => {
+    for (const entry of list.getEntries()) {
+        console.log(`${entry.name}: ${entry.startTime}ms`);
+    }
+});
+
+observer.observe({ entryTypes: ['paint', 'largest-contentful-paint'] });</code></pre>
+
+                <h2>5. 最佳实践清单</h2>
+                <ul>
+                    <li>使用适当的缓存策略</li>
+                    <li>优化关键渲染路径</li>
+                    <li>实施懒加载策略</li>
+                    <li>压缩和优化资源</li>
+                    <li>使用 CDN 加速</li>
+                    <li>优化 JavaScript 执行</li>
+                </ul>
+
+                <h2>6. 性能优化工具</h2>
+                <ul>
+                    <li>Lighthouse</li>
+                    <li>Chrome DevTools</li>
+                    <li>WebPageTest</li>
+                    <li>Performance API</li>
+                </ul>
+            </div>
+        </div>
+    </article>
+
+    <script>
+        BackgroundManager.init({
+            duration: 30,
+            blur: 0.5,
+            opacity: 1
+        });
+    </script>
+</body>
+</html> 

@@ -1,0 +1,882 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>个人主页</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Righteous&family=Quicksand:wght@300;400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=ZCOOL+XiaoWei&family=Josefin+Sans:wght@300;400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./css/background.css">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Microsoft YaHei', sans-serif;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0);
+            backdrop-filter: blur(15px);
+            padding: 3.5rem;
+            border-radius: 30px;
+            text-align: center;
+            color: white;
+            max-width: 420px;
+            width: 90%;
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.5);
+            z-index: 1;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            border: none;
+            overflow: hidden;
+        }
+
+        .container::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(
+                to bottom right,
+                rgba(255, 255, 255, 0.1) 0%,
+                rgba(255, 255, 255, 0.05) 50%,
+                transparent 100%
+            );
+            pointer-events: none;
+        }
+
+        .container:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 45px rgba(31, 38, 135, 0.6);
+        }
+
+        .container:hover::before {
+            background: linear-gradient(
+                45deg,
+                rgba(255, 255, 255, 0.2),
+                rgba(255, 255, 255, 0.1) 50%,
+                transparent
+            );
+        }
+
+        .container::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            padding: 1px;
+            border-radius: 30px;
+            background: linear-gradient(
+                45deg,
+                rgba(255, 255, 255, 0.1),
+                rgba(255, 255, 255, 0.05) 50%,
+                transparent
+            );
+            -webkit-mask: 
+                linear-gradient(#fff 0 0) content-box, 
+                linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            pointer-events: none;
+        }
+
+        .avatar {
+            width: 130px;
+            height: 130px;
+            border-radius: 50%;
+            margin-bottom: 2rem;
+            object-fit: cover;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .avatar:hover {
+            transform: scale(1.05);
+            border-color: rgba(255, 255, 255, 0.5);
+            box-shadow: 0 8px 35px rgba(0, 0, 0, 0.3);
+        }
+
+        .name {
+            font-size: 2rem;
+            margin: 2rem 0;
+            position: relative;
+        }
+
+        .name .highlight {
+            color: #FFB938;
+            font-weight: normal;
+            font-family: 'Microsoft YaHei', sans-serif;
+        }
+
+        .name .main-text {
+            font-family: 'Righteous', cursive;
+            font-size: 2.5rem;
+            background: linear-gradient(
+                135deg,
+                #1f1c33 0%,   /* Deep Purple */
+                #7e1c58 30%,  /* Wine Red */
+                #f5ae2e 60%,  /* Yellow Orange */
+                #4458cd 90%,  /* Blue */
+                #1f1c33 100%  /* Deep Purple */
+            );
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: shine 4s linear infinite;
+            text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.2);
+            letter-spacing: 2px;
+        }
+
+        @keyframes shine {
+            to {
+                background-position: 200% center;
+            }
+        }
+
+        .welcome {
+            font-size: 1.2rem;
+            margin: 2.5rem 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1.5rem;
+            position: relative;
+        }
+
+        .welcome .cn {
+            font-family: 'ZCOOL XiaoWei', serif;
+            font-size: 2rem;
+            background: linear-gradient(
+                120deg,
+                #1f1c33,  /* Deep Purple */
+                #7e1c58,  /* Wine Red */
+                #f5ae2e   /* Yellow Orange */
+            );
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: shine 3s linear infinite;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            letter-spacing: 2px;
+            font-weight: 500;
+        }
+
+        .welcome .en {
+            font-family: 'Josefin Sans', sans-serif;
+            font-size: 1.6rem;
+            font-weight: 400;
+            letter-spacing: 4px;
+            background: linear-gradient(120deg, #fff, rgba(255, 255, 255, 0.7), #fff);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: shine 3s linear infinite;
+            text-transform: uppercase;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        @keyframes shine {
+            to {
+                background-position: 200% center;
+            }
+        }
+
+        .welcome .cn,
+        .welcome .en {
+            transition: all 0.5s ease;
+            display: block;
+            opacity: 1;
+        }
+
+        .contact-info {
+            margin: 2.5rem 0;
+        }
+
+        .contact-info a {
+            color: white;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.8rem;
+            margin: 1.2rem 0;
+            padding: 0.8rem 1.5rem;
+            position: relative;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            overflow: visible;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            isolation: isolate;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: elementFadeIn 0.8s cubic-bezier(0.22, 1, 0.36, 1) 1.4s forwards;
+        }
+
+        .contact-info a i {
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+        }
+
+        .contact-info a::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                120deg,
+                transparent,
+                rgba(255, 255, 255, 0.1),
+                rgba(255, 255, 255, 0.1),
+                transparent
+            );
+            transform: translateX(-100%);
+            transition: 0.6s;
+        }
+
+        .contact-info a:hover {
+            transform: translateY(-2px);
+            background: rgba(255, 255, 255, 0.15);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .contact-info a:hover::before {
+            transform: translateX(100%);
+        }
+
+        .contact-info a:hover i {
+            transform: scale(1.2) rotate(360deg);
+        }
+
+        .contact-info a:nth-child(2) {
+            opacity: 0;
+            transform: translateY(20px);
+            animation: elementFadeIn 0.8s cubic-bezier(0.22, 1, 0.36, 1) 1.6s forwards;
+        }
+
+        .copy-tooltip {
+            position: absolute;
+            left: 50%;
+            bottom: -35px;
+            transform: translateX(-50%) translateY(10px);
+            background: rgba(0, 0, 0, 0.75);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            white-space: nowrap;
+            backdrop-filter: blur(4px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            z-index: 100;
+            pointer-events: none;
+        }
+
+        .contact-info a:hover .copy-tooltip {
+            opacity: 1;
+            visibility: visible;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .contact-info a.copied .copy-tooltip {
+            background: linear-gradient(45deg, rgba(46, 204, 113, 0.95), rgba(39, 174, 96, 0.95));
+        }
+
+        .copy-tooltip i {
+            margin-left: 4px;
+            font-size: 11px;
+        }
+
+        .copy-tooltip::before {
+            content: '';
+            position: absolute;
+            top: -4px;
+            left: 50%;
+            transform: translateX(-50%) rotate(45deg);
+            width: 8px;
+            height: 8px;
+            background: inherit;
+            border-left: 1px solid rgba(255, 255, 255, 0.1);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* 添加图标特效 */
+        .contact-info a .fa-envelope {
+            color: #FFB938;
+        }
+
+        .contact-info a .fa-telegram {
+            color: #0088cc;
+        }
+
+        .explore-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.8rem 2rem;
+            font-size: 1rem;
+            color: white;
+            text-decoration: none;
+            background: linear-gradient(45deg, #8e44ad, #9b59b6);
+            border-radius: 25px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            opacity: 0;
+            transform: translateY(20px);
+            animation: elementFadeIn 0.8s cubic-bezier(0.22, 1, 0.36, 1) 1.8s forwards;
+        }
+
+        .explore-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                120deg,
+                transparent,
+                rgba(255, 255, 255, 0.2),
+                transparent
+            );
+            transform: translateX(-100%);
+            transition: 0.5s;
+        }
+
+        .explore-btn:hover {
+            transform: translateY(-2px);
+            background: linear-gradient(45deg, #9b59b6, #8e44ad);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .explore-btn:hover::before {
+            transform: translateX(100%);
+        }
+
+        .explore-btn::after {
+            content: '→';
+            margin-left: 8px;
+            transition: transform 0.3s ease;
+            display: inline-block;
+        }
+
+        .explore-btn:hover::after {
+            transform: translateX(5px);
+        }
+
+        /* 添加复制提示气泡 */
+        .contact-info a .copy-tip {
+            position: absolute;
+            right: -20px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255, 255, 255, 0.1);
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.6);
+            white-space: nowrap;
+            pointer-events: none;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .contact-info a .copy-tip i {
+            font-size: 12px;
+            margin-left: 4px;
+            color: rgba(255, 255, 255, 0.4);
+        }
+
+        .contact-info a.copied .copy-tip {
+            background: linear-gradient(45deg, #2ecc71, #27ae60);
+            color: white;
+        }
+
+        .contact-info a.copied .copy-tip i {
+            color: white;
+        }
+
+        .welcome .cn,
+        .welcome .en {
+            transition: all 0.5s ease;
+            display: block;
+        }
+
+        @keyframes elementFadeIn {
+            0% {
+                opacity: 0;
+                transform: translateY(20px);
+                filter: blur(5px);
+            }
+            70% {
+                opacity: 0.7;
+                transform: translateY(-5px);
+                filter: blur(0);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+                filter: blur(0);
+            }
+        }
+
+        /* 添加展开动画样式 */
+        .reveal-animation {
+            position: fixed;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            pointer-events: none;
+        }
+        
+        .reveal-circle {
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(
+                45deg,
+                rgba(255, 107, 107, 0.8),  /* 珊瑚红 */
+                rgba(78, 205, 196, 0.8),   /* 青绿 */
+                rgba(139, 92, 246, 0.8)    /* 紫色 */
+            );
+            border-radius: 50%;
+            transform: scale(0);
+            opacity: 0.9;
+            box-shadow: 
+                0 0 50px rgba(255, 255, 255, 0.3),
+                0 0 100px rgba(255, 255, 255, 0.2),
+                0 0 150px rgba(255, 255, 255, 0.1);
+            filter: blur(5px);
+            animation: revealExpand 1.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        }
+        
+        @keyframes revealExpand {
+            0% {
+                transform: scale(0);
+                opacity: 0.9;
+                filter: blur(5px);
+            }
+            50% {
+                opacity: 0.7;
+                filter: blur(10px);
+            }
+            100% {
+                transform: scale(20);
+                opacity: 0;
+                filter: blur(15px);
+            }
+        }
+        
+        .container {
+            opacity: 0;
+            transform: scale(0.9);
+            animation: containerAppear 0.8s cubic-bezier(0.4, 0, 0.2, 1) 0.4s forwards;
+        }
+        
+        @keyframes containerAppear {
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        /* 探索按钮跳转动画 */
+        .explore-transition {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 9999;
+            pointer-events: none;
+            opacity: 0;
+            background: linear-gradient(
+                135deg,
+                #1f1c33,  /* Deep Purple */
+                #7e1c58,  /* Wine Red */
+                #4458cd,  /* Blue */
+                #1f1c33   /* Deep Purple */
+            );
+            background-size: 400% 400%;
+            transition: all 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+            clip-path: circle(0% at var(--x) var(--y));
+        }
+
+        .explore-transition.active {
+            opacity: 1;
+            clip-path: circle(150% at var(--x) var(--y));
+            animation: gradientMove 8s ease infinite;
+        }
+
+        @keyframes gradientMove {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        /* 添加移动设备特定的动画调整 */
+        @media (max-width: 768px) {
+            .explore-transition {
+                transition: all 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+            }
+            
+            .explore-transition.active {
+                animation: gradientMove 12s ease infinite;
+            }
+        }
+
+        /* 移动端基础样式 */
+        @media (max-width: 768px) {
+            .container {
+                padding: 2.5rem;
+                width: 85%;
+            }
+
+            .name .main-text {
+                font-size: 2rem;
+            }
+
+            .welcome .cn {
+                font-size: 1.6rem;
+            }
+
+            .welcome .en {
+                font-size: 1.2rem;
+            }
+
+            .contact-info a {
+                padding: 0.8rem;
+            }
+
+            .explore-btn {
+                padding: 0.8rem 1.5rem;
+                font-size: 0.9rem;
+            }
+        }
+
+        /* 适配小屏幕设备 */
+        @media (max-width: 480px) {
+            .container {
+                padding: 2rem;
+            }
+
+            .avatar {
+                width: 100px;
+                height: 100px;
+            }
+
+            .contact-info {
+                margin: 2rem 0;
+            }
+
+            .contact-info a {
+                font-size: 0.9rem;
+                padding: 0.6rem;
+            }
+
+            .copy-tooltip {
+                font-size: 0.8rem;
+            }
+        }
+
+        /* 优化触摸设备的交互 */
+        @media (hover: none) {
+            .container:hover {
+                transform: none;
+            }
+
+            .avatar:hover {
+                transform: none;
+            }
+
+            .contact-info a:hover {
+                transform: none;
+            }
+
+            .explore-btn:hover {
+                transform: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 添加展开动画元素 -->
+    <div class="reveal-animation">
+        <div class="reveal-circle"></div>
+    </div>
+
+    <div class="container">
+        <img src="./images/anonymous.jpg" alt="头像" class="avatar">
+        <h1 class="name">
+            <span class="highlight">你好，我是</span>
+            <span class="main-text">XenonEmery</span>
+        </h1>
+        <div class="welcome">
+            <span class="cn">欢迎来到我的个人主页</span>
+            <span class="en">Welcome to My Page</span>
+        </div>
+        <div class="contact-info">
+            <a href="mailto:XenonEmery@gmail.com">
+                <i class="fa-regular fa-envelope"></i>
+                XenonEmery@gmail.com
+                <div class="copy-tooltip">点击复制 <i class="fas fa-copy"></i></div>
+            </a>
+            <a href="https://t.me/XenonEmery">
+                <i class="fab fa-telegram"></i>
+                @XenonEmery
+                <div class="copy-tooltip">点击复制 <i class="fas fa-copy"></i></div>
+            </a>
+        </div>
+        <a href="./blog" class="explore-btn">探索我的博客世界</a>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const container = document.querySelector('.container');
+            
+            container.addEventListener('mousemove', (e) => {
+                const rect = container.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                
+                container.style.setProperty('--mouse-x', `${x}px`);
+                container.style.setProperty('--mouse-y', `${y}px`);
+            });
+
+            // 修改打字效果函数
+            const addTypingEffect = (element, text) => {
+                element.innerHTML = '';
+                const chars = text.split('');
+                chars.forEach((char, index) => {
+                    const span = document.createElement('span');
+                    span.textContent = char;
+                    span.style.opacity = '0';
+                    element.appendChild(span);
+                });
+            };
+
+            // 获取元素（只获取一次）
+            const welcomeCn = document.querySelector('.welcome .cn');
+            const welcomeEn = document.querySelector('.welcome .en');
+            let animationCount = 0; // 用于跟踪动画次数
+
+            function showText() {
+                // 重置文本和样式
+                welcomeCn.textContent = '';
+                welcomeEn.textContent = '';
+                welcomeCn.style.opacity = '1';
+                welcomeEn.style.opacity = '1';
+                welcomeCn.style.transform = 'translate(0, 0)';
+                welcomeEn.style.transform = 'translate(0, 0)';
+                
+                // 打字效果
+                let indexCn = 0;
+                let indexEn = 0;
+                const textCn = '欢迎来到我的个人主页';
+                const textEn = 'Welcome to My Page';
+                const totalTimems = 2000;
+                const speedCn = totalTimems / textCn.length;
+                const speedEn = totalTimems / textEn.length;
+                
+                function typeCn() {
+                    if (indexCn < textCn.length) {
+                        welcomeCn.textContent += textCn[indexCn];
+                        indexCn++;
+                        setTimeout(typeCn, speedCn);
+                    }
+                }
+                
+                function typeEn() {
+                    if (indexEn < textEn.length) {
+                        welcomeEn.textContent += textEn[indexEn];
+                        indexEn++;
+                        setTimeout(typeEn, speedEn);
+                    }
+                }
+
+                // 不同的消失动画
+                const fadeAnimations = [
+                    // 向上消失 - 添加旋转和模糊效果
+                    () => {
+                        welcomeCn.style.transform = 'translateY(-30px) rotate(-5deg)';
+                        welcomeEn.style.transform = 'translateY(-30px) rotate(5deg)';
+                        welcomeCn.style.opacity = '0';
+                        welcomeEn.style.opacity = '0';
+                        welcomeCn.style.filter = 'blur(5px)';
+                        welcomeEn.style.filter = 'blur(5px)';
+                    },
+                    // 向下消失 - 添加缩放效果
+                    () => {
+                        welcomeCn.style.transform = 'translateY(30px) scale(0.9)';
+                        welcomeEn.style.transform = 'translateY(30px) scale(0.9)';
+                        welcomeCn.style.opacity = '0';
+                        welcomeEn.style.opacity = '0';
+                        welcomeCn.style.filter = 'blur(5px)';
+                        welcomeEn.style.filter = 'blur(5px)';
+                    },
+                    // 向左消失 - 添加倾斜效果
+                    () => {
+                        welcomeCn.style.transform = 'translateX(-50px) skew(-10deg)';
+                        welcomeEn.style.transform = 'translateX(-50px) skew(-10deg)';
+                        welcomeCn.style.opacity = '0';
+                        welcomeEn.style.opacity = '0';
+                        welcomeCn.style.filter = 'blur(5px)';
+                        welcomeEn.style.filter = 'blur(5px)';
+                    },
+                    // 向右消失 - 添加弹跳效果
+                    () => {
+                        welcomeCn.style.transform = 'translateX(50px) scale(1.1)';
+                        welcomeEn.style.transform = 'translateX(50px) scale(1.1)';
+                        welcomeCn.style.opacity = '0';
+                        welcomeEn.style.opacity = '0';
+                        welcomeCn.style.filter = 'blur(5px)';
+                        welcomeEn.style.filter = 'blur(5px)';
+                    },
+                    // 从外到消失 - 添加3D效果
+                    () => {
+                        welcomeCn.style.transform = 'scale(0.8) rotateX(45deg)';
+                        welcomeEn.style.transform = 'scale(0.8) rotateX(-45deg)';
+                        welcomeCn.style.opacity = '0';
+                        welcomeEn.style.opacity = '0';
+                        welcomeCn.style.filter = 'blur(8px)';
+                        welcomeEn.style.filter = 'blur(8px)';
+                    }
+                ];
+                
+                // 开始打字时的效果
+                welcomeCn.style.transition = 'none';
+                welcomeEn.style.transition = 'none';
+                welcomeCn.style.transform = 'translateY(0) scale(1)';
+                welcomeEn.style.transform = 'translateY(0) scale(1)';
+                welcomeCn.style.opacity = '1';
+                welcomeEn.style.opacity = '1';
+                welcomeCn.style.filter = 'blur(0)';
+                welcomeEn.style.filter = 'blur(0)';
+                
+                // 开始打字
+                typeCn();
+                typeEn();
+                
+                // 3秒后执行消失动画
+                setTimeout(() => {
+                    welcomeCn.style.transition = 'all 0.8s cubic-bezier(0.4, 0, 0.2, 1)';
+                    welcomeEn.style.transition = 'all 0.8s cubic-bezier(0.4, 0, 0.2, 1)';
+                    
+                    // 执行前的消失动画
+                    fadeAnimations[animationCount % fadeAnimations.length]();
+                    
+                    // 增加动画计数
+                    animationCount++;
+                    
+                    // 如果到达最后一个动画，重置计数
+                    if (animationCount >= fadeAnimations.length) {
+                        animationCount = 0;
+                    }
+                }, 5000);
+                
+                // 6秒后重新开始
+                setTimeout(showText, 6000);
+            }
+
+            // 开始动画
+            showText();
+
+            // 修改复制功能
+            const copyToClipboard = (text, element) => {
+                const cleanText = text.replace(/\s+/g, '');
+                
+                navigator.clipboard.writeText(cleanText).then(() => {
+                    const tooltip = element.querySelector('.copy-tooltip');
+                    element.classList.add('copied');
+                    tooltip.innerHTML = '已复制 <i class="fas fa-check"></i>';
+                    
+                    setTimeout(() => {
+                        element.classList.remove('copied');
+                        tooltip.innerHTML = '点击复制 <i class="fas fa-copy"></i>';
+                    }, 2000);
+                }).catch(err => {
+                    console.error('复制失败:', err);
+                });
+            };
+
+            // 为邮箱添加复制功能
+            const emailLink = document.querySelector('a[href^="mailto:"]');
+            emailLink.addEventListener('click', (e) => {
+                e.preventDefault();
+                const emailText = 'XenonEmery@gmail.com';
+                copyToClipboard(emailText, emailLink);
+            });
+
+            // 为Telegram添加复制功能
+            const telegramLink = document.querySelector('a[href^="https://t.me/"]');
+            telegramLink.addEventListener('click', (e) => {
+                e.preventDefault();
+                const telegramText = '@XenonEmery';
+                copyToClipboard(telegramText, telegramLink);
+            });
+
+            // 添加探索按钮的跳转动画
+            const exploreBtn = document.querySelector('.explore-btn');
+            exploreBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                
+                const rect = exploreBtn.getBoundingClientRect();
+                const x = rect.left + rect.width / 2;
+                const y = rect.top + rect.height / 2;
+                
+                const transitionDiv = document.createElement('div');
+                transitionDiv.className = 'explore-transition';
+                document.body.appendChild(transitionDiv);
+                
+                // 存储跳转位置到 sessionStorage
+                sessionStorage.setItem('transitionPoint', JSON.stringify({ x, y }));
+                
+                // 设置动画起始点为按钮中心
+                transitionDiv.style.setProperty('--x', x + 'px');
+                transitionDiv.style.setProperty('--y', y + 'px');
+                
+                // 触发动画
+                requestAnimationFrame(() => {
+                    transitionDiv.classList.add('active');
+                });
+                
+                // 延迟跳转，等待动画完成
+                setTimeout(() => {
+                    window.location.href = './blog.html';
+                }, 1200);
+            });
+
+            // 动画结束后移除动画元素
+            setTimeout(() => {
+                document.querySelector('.reveal-animation').remove();
+            }, 1500);
+        });
+    </script>
+</body>
+</html> 

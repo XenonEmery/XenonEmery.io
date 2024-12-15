@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GraphQL API 开发实战 - 我的博客</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="../js/background.js"></script>
+    <script src="../js/transition.js"></script>
+    <link rel="stylesheet" href="./article-template.css">
+</head>
+<body>
+    <div class="transition-overlay"></div>
+    <a href="../blog.html" class="back-btn">返回博客列表</a>
+    
+    <article class="article-container">
+        <header class="article-header">
+            <h1 class="article-title">GraphQL API 开发实战</h1>
+            <div class="article-meta">
+                <span><i class="far fa-calendar"></i> 2024-03-10</span>
+                <span><i class="far fa-clock"></i> 25分钟阅读</span>
+                <span><i class="far fa-folder"></i> API</span>
+            </div>
+        </header>
+        
+        <div class="article-content-wrapper">
+            <div class="article-content">
+                <h2>引言</h2>
+                <p>GraphQL 作为新一代 API 查询语言，提供了更灵活的数据查询和操作方式。本文将深入探讨 GraphQL API 的开发实践。</p>
+
+                <h2>1. Schema 定义</h2>
+                <pre><code>// schema.graphql
+type User {
+    id: ID!
+    name: String!
+    email: String!
+    posts: [Post!]!
+    profile: Profile
+}
+
+type Post {
+    id: ID!
+    title: String!
+    content: String!
+    author: User!
+    comments: [Comment!]!
+    createdAt: DateTime!
+}
+
+type Query {
+    user(id: ID!): User
+    users(page: Int, limit: Int): [User!]!
+    posts(authorId: ID): [Post!]!
+}
+
+type Mutation {
+    createUser(input: CreateUserInput!): User!
+    updateUser(id: ID!, input: UpdateUserInput!): User!
+    deleteUser(id: ID!): Boolean!
+}</code></pre>
+
+                <h2>2. 解析器实现</h2>
+                <blockquote>
+                    <p>解析器是 GraphQL 的核心，负责实现具体的数据获取逻辑。</p>
+                </blockquote>
+
+                <pre><code>// resolvers.ts
+const resolvers = {
+    Query: {
+        async user(_, { id }, context) {
+            return await context.prisma.user.findUnique({
+                where: { id }
+            });
+        },
+        async users(_, { page = 1, limit = 10 }, context) {
+            return await context.prisma.user.findMany({
+                skip: (page - 1) * limit,
+                take: limit
+            });
+        }
+    },
+    
+    User: {
+        async posts(parent, _, context) {
+            return await context.prisma.post.findMany({
+                where: { authorId: parent.id }
+            });
+        }
+    }
+};</code></pre>
+
+                <h2>3. 中间件和认证</h2>
+                <pre><code>// auth.middleware.ts
+const authMiddleware = async (resolve, root, args, context, info) => {
+    const token = context.req.headers.authorization;
+    if (!token) {
+        throw new Error('Authentication required');
+    }
+
+    try {
+        const user = await verifyToken(token);
+        context.user = user;
+        return await resolve(root, args, context, info);
+    } catch (error) {
+        throw new Error('Invalid token');
+    }
+};
+
+// 应用中间件
+const schema = applyMiddleware(
+    makeExecutableSchema({ typeDefs, resolvers }),
+    authMiddleware
+);</code></pre>
+
+                <h2>4. 数据加载优化</h2>
+                <p>使用 DataLoader 解决 N+1 查询问题：</p>
+                <pre><code>// dataloader.ts
+class PostLoader {
+    private loader = new DataLoader(async (authorIds: readonly string[]) => {
+        const posts = await prisma.post.findMany({
+            where: {
+                authorId: { in: [...authorIds] }
+            }
+        });
+
+        const postsByAuthor = authorIds.map(id =>
+            posts.filter(post => post.authorId === id)
+        );
+
+        return postsByAuthor;
+    });
+
+    load(authorId: string) {
+        return this.loader.load(authorId);
+    }
+}</code></pre>
+
+                <h2>5. 错误处理</h2>
+                <pre><code>// error-handling.ts
+class ValidationError extends Error {
+    constructor(message: string) {
+        super(message);
+        this.name = 'ValidationError';
+    }
+}
+
+const formatError = (error: GraphQLError) => {
+    if (error.originalError instanceof ValidationError) {
+        return {
+            message: error.message,
+            code: 'VALIDATION_ERROR',
+            locations: error.locations,
+            path: error.path
+        };
+    }
+    return error;
+};</code></pre>
+
+                <h2>6. 最佳实践</h2>
+                <ul>
+                    <li>合理设计 Schema</li>
+                    <li>实现数据加载优化</li>
+                    <li>处理认证和授权</li>
+                    <li>实现缓存策略</li>
+                    <li>错误处理和日志</li>
+                    <li>性能监控</li>
+                </ul>
+
+                <pre><code>// 性能监控示例
+const responseTimePlugin = {
+    requestDidStart({ context }) {
+        const start = Date.now();
+        return {
+            willSendResponse({ context }) {
+                const duration = Date.now() - start;
+                console.log(`Request took: ${duration}ms`);
+                metrics.recordResponseTime(duration);
+            }
+        };
+    }
+};</code></pre>
+            </div>
+        </div>
+    </article>
+
+    <script>
+        BackgroundManager.init({
+            duration: 30,
+            blur: 0.5,
+            opacity: 1
+        });
+    </script>
+</body>
+</html> 

@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>文章标题 - 我的博客</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="../js/background.js"></script>
+    <script src="../js/transition.js"></script>
+    <link rel="stylesheet" href="./article-template.css">
+    <style>
+        /* 页面入场动画 */
+        @keyframes pageEnter {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .article-container {
+            animation: pageEnter 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        }
+
+        /* 内容渐入动画 */
+        @keyframes contentFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .article-content > * {
+            opacity: 0;
+            animation: contentFadeIn 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+            animation-delay: calc(var(--content-index) * 0.1s);
+        }
+    </style>
+</head>
+<body>
+    <div class="transition-overlay"></div>
+    <a href="../blog.html" class="back-btn">返回博客列表</a>
+    
+    <article class="article-container">
+        <header class="article-header">
+            <h1 class="article-title">文章标题</h1>
+            <div class="article-meta">
+                <span><i class="far fa-calendar"></i> 发布日期</span>
+                <span><i class="far fa-clock"></i> 阅读时长</span>
+                <span><i class="far fa-folder"></i> 分类</span>
+            </div>
+        </header>
+        
+        <div class="article-content-wrapper">
+            <div class="article-content">
+                <!-- 文章内容 -->
+            </div>
+        </div>
+    </article>
+
+    <script>
+        BackgroundManager.init({
+            duration: 30,
+            blur: 0.5,
+            opacity: 1
+        });
+
+        // 为内容元素添加动画延迟
+        document.addEventListener('DOMContentLoaded', () => {
+            const contentElements = document.querySelectorAll('.article-content > *');
+            contentElements.forEach((el, index) => {
+                el.style.setProperty('--content-index', index + 1);
+            });
+        });
+
+        // 确保返回链接正常工作
+        document.querySelector('.back-btn').addEventListener('click', (e) => {
+            e.preventDefault();
+            window.location.href = '../blog.html';
+        });
+    </script>
+</body>
+</html> 

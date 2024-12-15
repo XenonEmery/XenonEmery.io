@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>前端安全防护最佳实践 - 我的博客</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="../js/background.js"></script>
+    <script src="../js/transition.js"></script>
+    <link rel="stylesheet" href="./article-template.css">
+</head>
+<body>
+    <div class="transition-overlay"></div>
+    <a href="../blog.html" class="back-btn">返回博客列表</a>
+    
+    <article class="article-container">
+        <header class="article-header">
+            <h1 class="article-title">前端安全防护最佳实践</h1>
+            <div class="article-meta">
+                <span><i class="far fa-calendar"></i> 2024-03-05</span>
+                <span><i class="far fa-clock"></i> 22分钟阅读</span>
+                <span><i class="far fa-folder"></i> 安全</span>
+            </div>
+        </header>
+        
+        <div class="article-content-wrapper">
+            <div class="article-content">
+                <h2>引言</h2>
+                <p>前端安全是 Web 应用不可忽视的重要环节。本文将深入探讨常见的安全威胁及其防护措施。</p>
+
+                <h2>1. XSS 防护</h2>
+                <pre><code>// 输入过滤
+function sanitizeInput(input) {
+    return input.replace(/[&<>"']/g, char => ({
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#39;'
+    })[char]);
+}
+
+// CSP 配置
+&lt;meta http-equiv="Content-Security-Policy" 
+    content="default-src 'self'; 
+    script-src 'self' 'unsafe-inline' 'unsafe-eval'; 
+    style-src 'self' 'unsafe-inline';"&gt;</code></pre>
+
+                <h2>2. CSRF 防护</h2>
+                <blockquote>
+                    <p>CSRF 攻击可以通过多种方式防护，包括 Token 验证和 SameSite Cookie。</p>
+                </blockquote>
+
+                <pre><code>// CSRF Token 实现
+class CSRFProtection {
+    static generateToken() {
+        return crypto.randomBytes(32).toString('hex');
+    }
+
+    static validateToken(token) {
+        return token === sessionStorage.getItem('csrfToken');
+    }
+}
+
+// 请求拦截器
+axios.interceptors.request.use(config => {
+    config.headers['X-CSRF-Token'] = 
+        sessionStorage.getItem('csrfToken');
+    return config;
+});</code></pre>
+
+                <h2>3. 点击劫持防护</h2>
+                <p>防止网站被嵌入恶意 iframe：</p>
+                <pre><code>// HTTP 响应头设置
+X-Frame-Options: SAMEORIGIN
+
+// JavaScript 防护
+if (window.self !== window.top) {
+    window.top.location = window.self.location;
+}
+
+// CSP frame-ancestors 指令
+Content-Security-Policy: frame-ancestors 'self';</code></pre>
+
+                <h2>4. 敏感数据保护</h2>
+                <pre><code>// 数据加密
+class DataEncryption {
+    static encrypt(data, key) {
+        const cipher = crypto.createCipher('aes-256-gcm', key);
+        let encrypted = cipher.update(data, 'utf8', 'hex');
+        encrypted += cipher.final('hex');
+        return encrypted;
+    }
+
+    static decrypt(encrypted, key) {
+        const decipher = crypto.createDecipher('aes-256-gcm', key);
+        let decrypted = decipher.update(encrypted, 'hex', 'utf8');
+        decrypted += decipher.final('utf8');
+        return decrypted;
+    }
+}</code></pre>
+
+                <h2>5. 安全监控</h2>
+                <pre><code>// 安全日志记录
+class SecurityMonitor {
+    static logSecurityEvent(event) {
+        const logData = {
+            timestamp: new Date().toISOString(),
+            type: event.type,
+            details: event.details,
+            userAgent: navigator.userAgent,
+            ip: event.ip
+        };
+        
+        // 发送到日志服务器
+        this.sendToLogServer(logData);
+    }
+
+    static detectSuspiciousActivity() {
+        // 监控可疑行为
+        document.addEventListener('copy', e => {
+            this.logSecurityEvent({
+                type: 'sensitive-content-copy',
+                details: {
+                    target: e.target.tagName,
+                    content: e.target.textContent
+                }
+            });
+        });
+    }
+}</code></pre>
+
+                <h2>6. 最佳实践</h2>
+                <ul>
+                    <li>实施内容安全策略 (CSP)</li>
+                    <li>使用 HTTPS</li>
+                    <li>实施安全的会话管理</li>
+                    <li>输入验证和输出编码</li>
+                    <li>定期安全审计</li>
+                    <li>依赖包安全检查</li>
+                </ul>
+
+                <pre><code>// 依赖包安全检查
+{
+    "scripts": {
+        "security-check": "npm audit && snyk test",
+        "preinstall": "npx npm-force-resolutions"
+    },
+    "resolutions": {
+        "minimist": "^1.2.5",
+        "lodash": "^4.17.21"
+    }
+}</code></pre>
+            </div>
+        </div>
+    </article>
+
+    <script>
+        BackgroundManager.init({
+            duration: 30,
+            blur: 0.5,
+            opacity: 1
+        });
+    </script>
+</body>
+</html> 

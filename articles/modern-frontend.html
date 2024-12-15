@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>现代化前端工程化实践 - 我的博客</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="../js/background.js"></script>
+    <script src="../js/transition.js"></script>
+    <link rel="stylesheet" href="./article-template.css">
+</head>
+<body>
+    <div class="transition-overlay"></div>
+    <a href="../blog.html" class="back-btn">返回博客列表</a>
+    
+    <article class="article-container">
+        <header class="article-header">
+            <h1 class="article-title">现代化前端工程化实践</h1>
+            <div class="article-meta">
+                <span><i class="far fa-calendar"></i> 2024-02-05</span>
+                <span><i class="far fa-clock"></i> 22分钟阅读</span>
+                <span><i class="far fa-folder"></i> 工程化</span>
+            </div>
+        </header>
+        
+        <div class="article-content-wrapper">
+            <div class="article-content">
+                <h2>引言</h2>
+                <p>前端工程化是现代 Web 开发的基石。本文将探讨如何使用 Vite、Webpack、ESBuild 等工具构建高效的前端开发工作流。</p>
+
+                <h2>1. Vite 开发配置</h2>
+                <pre><code>// vite.config.js
+import { defineConfig } from 'vite';
+import vue from '@vitejs/plugin-vue';
+import path from 'path';
+
+export default defineConfig({
+    plugins: [vue()],
+    resolve: {
+        alias: {
+            '@': path.resolve(__dirname, 'src')
+        }
+    },
+    build: {
+        rollupOptions: {
+            output: {
+                manualChunks: {
+                    'vendor': ['vue', 'vue-router', 'vuex'],
+                    'utils': ['lodash', 'axios']
+                }
+            }
+        }
+    }
+});</code></pre>
+
+                <h2>2. ESBuild 性能优化</h2>
+                <blockquote>
+                    <p>ESBuild 的超高性能可以显著提升构建速度，特别适合大型项目。</p>
+                </blockquote>
+
+                <pre><code>// esbuild.config.js
+require('esbuild').build({
+    entryPoints: ['src/index.js'],
+    bundle: true,
+    minify: true,
+    sourcemap: true,
+    target: ['chrome58', 'firefox57', 'safari11'],
+    outfile: 'dist/bundle.js',
+    plugins: [
+        // 自定义插件
+        {
+            name: 'env-replace',
+            setup(build) {
+                build.onResolve({ filter: /^env$/ }, args => ({
+                    path: args.path,
+                    namespace: 'env-ns',
+                }))
+            },
+        }
+    ]
+}).catch(() => process.exit(1));</code></pre>
+
+                <h2>3. 模块化开发</h2>
+                <p>合理的模块化结构对于项目的可维护性至关重要：</p>
+                <pre><code>// 项目结构示例
+src/
+  ├── assets/
+  ├── components/
+  │   ├── common/
+  │   └── business/
+  ├── hooks/
+  ├── services/
+  ├── store/
+  ├── utils/
+  └── views/
+
+// 模块导入示例
+import { createRouter } from './router';
+import { setupStore } from './store';
+import { setupI18n } from './locales';
+
+async function bootstrap() {
+    const app = createApp(App);
+    setupRouter(app);
+    setupStore(app);
+    await setupI18n(app);
+    app.mount('#app');
+}</code></pre>
+
+                <h2>4. 自动化测试</h2>
+                <p>完善的测试体系确保代码质量：</p>
+                <pre><code>// jest.config.js
+module.exports = {
+    preset: 'ts-jest',
+    testEnvironment: 'jsdom',
+    moduleNameMapper: {
+        '^@/(.*)$': '<rootDir>/src/$1'
+    },
+    collectCoverageFrom: [
+        'src/**/*.{js,ts,vue}',
+        '!src/main.ts',
+        '!src/App.vue'
+    ]
+};
+
+// 测试用例示例
+describe('UserService', () => {
+    it('should fetch user data correctly', async () => {
+        const userData = await UserService.fetchUser(1);
+        expect(userData).toHaveProperty('id');
+        expect(userData).toHaveProperty('name');
+    });
+});</code></pre>
+
+                <h2>5. CI/CD 配置</h2>
+                <pre><code>// .github/workflows/deploy.yml
+name: Deploy
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install
+        run: npm install
+      - name: Build
+        run: npm run build
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist</code></pre>
+
+                <h2>6. 最佳实践清单</h2>
+                <ul>
+                    <li>使用 monorepo 管理多包项目</li>
+                    <li>实施代码规范和提交规范</li>
+                    <li>自动化版本管理和发布</li>
+                    <li>性能监控和错误追踪</li>
+                    <li>微前端架构设计</li>
+                    <li>组件库开发与维护</li>
+                </ul>
+            </div>
+        </div>
+    </article>
+
+    <script>
+        BackgroundManager.init({
+            duration: 30,
+            blur: 0.5,
+            opacity: 1
+        });
+    </script>
+</body>
+</html> 

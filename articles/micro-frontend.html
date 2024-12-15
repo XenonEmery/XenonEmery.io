@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>微前端架构设计与实践 - 我的博客</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="../js/background.js"></script>
+    <script src="../js/transition.js"></script>
+    <link rel="stylesheet" href="./article-template.css">
+</head>
+<body>
+    <div class="transition-overlay"></div>
+    <a href="../blog.html" class="back-btn">返回博客列表</a>
+    
+    <article class="article-container">
+        <header class="article-header">
+            <h1 class="article-title">微前端架构设计与实践</h1>
+            <div class="article-meta">
+                <span><i class="far fa-calendar"></i> 2024-02-20</span>
+                <span><i class="far fa-clock"></i> 30分钟阅读</span>
+                <span><i class="far fa-folder"></i> 架构设计</span>
+            </div>
+        </header>
+        
+        <div class="article-content-wrapper">
+            <div class="article-content">
+                <h2>引言</h2>
+                <p>微前端架构是一种将前端应用分解为小型、独立部署的应用的现代方法。本文将探讨微前端的实现方案和最佳实践。</p>
+
+                <h2>1. 基础架构设计</h2>
+                <pre><code>// 主应用配置
+// main-app.js
+import { registerApplication, start } from 'single-spa';
+
+registerApplication({
+    name: 'vue-app',
+    app: () => import('./vue-app'),
+    activeWhen: '/vue'
+});
+
+registerApplication({
+    name: 'react-app',
+    app: () => import('./react-app'),
+    activeWhen: '/react'
+});
+
+start();</code></pre>
+
+                <h2>2. 应用间通信</h2>
+                <blockquote>
+                    <p>微前端应用间的通信是关键挑战之一，需要合理设计通信机制。</p>
+                </blockquote>
+
+                <pre><code>// 事件总线实现
+class EventBus {
+    private events = new Map();
+
+    on(event: string, callback: Function) {
+        if (!this.events.has(event)) {
+            this.events.set(event, []);
+        }
+        this.events.get(event).push(callback);
+    }
+
+    emit(event: string, data: any) {
+        if (this.events.has(event)) {
+            this.events.get(event).forEach(cb => cb(data));
+        }
+    }
+}
+
+export const eventBus = new EventBus();</code></pre>
+
+                <h2>3. 样式隔离</h2>
+                <pre><code>// CSS 模块化方案
+// webpack.config.js
+module.exports = {
+    module: {
+        rules: [{
+            test: /\.css$/,
+            use: [
+                'style-loader',
+                {
+                    loader: 'css-loader',
+                    options: {
+                        modules: {
+                            localIdentName: '[name]__[local]___[hash:base64:5]'
+                        }
+                    }
+                }
+            ]
+        }]
+    }
+};</code></pre>
+
+                <h2>4. 路由管理</h2>
+                <p>实现统一的路由管理策略：</p>
+                <pre><code>// 路由配置
+const routes = [
+    {
+        path: '/app1/*',
+        app: 'app1',
+        props: {
+            basename: '/app1'
+        }
+    },
+    {
+        path: '/app2/*',
+        app: 'app2',
+        props: {
+            basename: '/app2'
+        }
+    }
+];
+
+// 路由守卫
+function routeGuard(to, from, next) {
+    if (needAuth(to)) {
+        checkAuth().then(next).catch(() => {
+            next('/login');
+        });
+    } else {
+        next();
+    }
+}</code></pre>
+
+                <h2>5. 性能优化</h2>
+                <pre><code>// 应用预加载
+import { preloadApp } from './utils';
+
+const appConfigs = [
+    { name: 'app1', entry: '/app1/entry.js' },
+    { name: 'app2', entry: '/app2/entry.js' }
+];
+
+// 预加载策略
+function preloadStrategy() {
+    const visibleApps = getVisibleApps();
+    visibleApps.forEach(app => {
+        preloadApp(app.name, app.entry);
+    });
+}
+
+// 资源加载优化
+const loadScript = (url) => {
+    return new Promise((resolve, reject) => {
+        const script = document.createElement('script');
+        script.src = url;
+        script.onload = resolve;
+        script.onerror = reject;
+        document.head.appendChild(script);
+    });
+};</code></pre>
+
+                <h2>6. 最佳实践</h2>
+                <ul>
+                    <li>应用间状态管理</li>
+                    <li>统一的构建流程</li>
+                    <li>错误边界处理</li>
+                    <li>应用生命周期管理</li>
+                    <li>共享依赖管理</li>
+                    <li>监控和日志系统</li>
+                </ul>
+
+                <pre><code>// 错误边界示例
+class ErrorBoundary extends React.Component {
+    state = { hasError: false };
+
+    static getDerivedStateFromError(error) {
+        return { hasError: true };
+    }
+
+    componentDidCatch(error, errorInfo) {
+        logError(error, errorInfo);
+    }
+
+    render() {
+        if (this.state.hasError) {
+            return &lt;h1&gt;Something went wrong.&lt;/h1&gt;;
+        }
+        return this.props.children;
+    }
+}</code></pre>
+            </div>
+        </div>
+    </article>
+
+    <script>
+        BackgroundManager.init({
+            duration: 30,
+            blur: 0.5,
+            opacity: 1
+        });
+    </script>
+</body>
+</html> 

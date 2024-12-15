@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JavaScript 异步编程最佳实践 - 我的博客</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="../js/background.js"></script>
+    <script src="../js/transition.js"></script>
+    <link rel="stylesheet" href="./article-template.css">
+</head>
+<body>
+    <div class="transition-overlay"></div>
+    <a href="../blog.html" class="back-btn">返回博客列表</a>
+    
+    <article class="article-container">
+        <header class="article-header">
+            <h1 class="article-title">JavaScript 异步编程最佳实践</h1>
+            <div class="article-meta">
+                <span><i class="far fa-calendar"></i> 2024-01-20</span>
+                <span><i class="far fa-clock"></i> 20分钟阅读</span>
+                <span><i class="far fa-folder"></i> JavaScript</span>
+            </div>
+        </header>
+        
+        <div class="article-content-wrapper">
+            <div class="article-content">
+                <h2>引言</h2>
+                <p>异步编程是 JavaScript 中最重要的概念之一。本文将深入探讨现代 JavaScript 中的异步编程模式，从基础的 Promise 到高级的 async/await 语法。</p>
+
+                <h2>1. Promise 基础</h2>
+                <p>Promise 是异步编程的基础，它代表了一个异步操作的最终结果：</p>
+                <pre><code>const promise = new Promise((resolve, reject) => {
+    // 异步操作
+    setTimeout(() => {
+        const success = true;
+        if (success) {
+            resolve('操作成功');
+        } else {
+            reject(new Error('操作失败'));
+        }
+    }, 1000);
+});</code></pre>
+
+                <h2>2. Async/Await 语法</h2>
+                <p>async/await 是基于 Promise 的语法糖，让异步代码更易读和维护：</p>
+                <pre><code>async function fetchUserData() {
+    try {
+        const response = await fetch('/api/user');
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error('获取用户数据失败:', error);
+    }
+}</code></pre>
+
+                <h2>3. 事件循环机制</h2>
+                <blockquote>
+                    <p>理解事件循环对于编写高效的异步代码至关���要。JavaScript 的事件循环由宏任务、微任务队列和调用栈组成。</p>
+                </blockquote>
+
+                <h2>4. 实际应用示例</h2>
+                <p>以下是一个结合 Promise 和 async/await 的实际应用示例：</p>
+                <pre><code>class DataService {
+    async fetchData() {
+        const [users, posts] = await Promise.all([
+            this.fetchUsers(),
+            this.fetchPosts()
+        ]);
+        
+        return this.combineData(users, posts);
+    }
+
+    async fetchUsers() {
+        const response = await fetch('/api/users');
+        return response.json();
+    }
+
+    async fetchPosts() {
+        const response = await fetch('/api/posts');
+        return response.json();
+    }
+
+    combineData(users, posts) {
+        return users.map(user => ({
+            ...user,
+            posts: posts.filter(post => post.userId === user.id)
+        }));
+    }
+}</code></pre>
+
+                <h2>5. 最佳实践</h2>
+                <ul>
+                    <li>总是使用 try/catch 处理异步错误</li>
+                    <li>避免回调地狱，使用 Promise 链或 async/await</li>
+                    <li>合理使用 Promise.all 处理并行任务</li>
+                    <li>注意异步操作的性能影响</li>
+                </ul>
+
+                <h2>6. 常见陷阱</h2>
+                <p>在使用异步编程时，需要注意以下几点：</p>
+                <ul>
+                    <li>不要忘记错误处理</li>
+                    <li>注意 await 的作用域</li>
+                    <li>避免不必要的串行操作</li>
+                    <li>合理处理并发限制</li>
+                </ul>
+            </div>
+        </div>
+    </article>
+
+    <script>
+        BackgroundManager.init({
+            duration: 30,
+            blur: 0.5,
+            opacity: 1
+        });
+    </script>
+</body>
+</html> 

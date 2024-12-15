@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>React Hooks 深入浅出 - 我的博客</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="../js/background.js"></script>
+    <script src="../js/transition.js"></script>
+    <link rel="stylesheet" href="./article-template.css">
+</head>
+<body>
+    <div class="transition-overlay"></div>
+    <div class="back-transition"></div>
+    <a href="../blog.html" class="back-btn">返回博客列表</a>
+    
+    <article class="article-container">
+        <header class="article-header">
+            <h1 class="article-title">React Hooks 深入浅出</h1>
+            <div class="article-meta">
+                <span><i class="far fa-calendar"></i> 2024-01-25</span>
+                <span><i class="far fa-clock"></i> 25分钟阅读</span>
+                <span><i class="far fa-folder"></i> React</span>
+            </div>
+        </header>
+        
+        <div class="article-content-wrapper">
+            <div class="article-content">
+                <h2>引言</h2>
+                <p>React Hooks 的引入彻底改变了 React 组件的编写方式。本文将深入探讨 Hooks 的工作原理和最佳实践。</p>
+
+                <h2>1. useState Hook</h2>
+                <p>useState 是最基础的 Hook，用于在函数组件中管理状态：</p>
+                <pre><code>function Counter() {
+    const [count, setCount] = useState(0);
+    
+    return (
+        <div>
+            <p>当前计数: {count}</p>
+            <button onClick={() => setCount(count + 1)}>
+                增加
+            </button>
+        </div>
+    );
+}</code></pre>
+
+                <h2>2. useEffect Hook</h2>
+                <p>useEffect 用于处理副作用，如数据获取、订阅等：</p>
+                <pre><code>function UserProfile({ userId }) {
+    const [user, setUser] = useState(null);
+    
+    useEffect(() => {
+        async function fetchUser() {
+            const response = await fetch(`/api/users/${userId}`);
+            const data = await response.json();
+            setUser(data);
+        }
+        
+        fetchUser();
+        
+        return () => {
+            // 清理函数
+        };
+    }, [userId]);
+    
+    if (!user) return <div>加载中...</div>;
+    return <div>{user.name}</div>;
+}</code></pre>
+
+                <h2>3. 自定义 Hook</h2>
+                <p>自定义 Hook 可以封装和复用状态逻辑：</p>
+                <pre><code>function useLocalStorage(key, initialValue) {
+    const [storedValue, setStoredValue] = useState(() => {
+        try {
+            const item = window.localStorage.getItem(key);
+            return item ? JSON.parse(item) : initialValue;
+        } catch (error) {
+            return initialValue;
+        }
+    });
+
+    const setValue = value => {
+        try {
+            setStoredValue(value);
+            window.localStorage.setItem(key, JSON.stringify(value));
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+    return [storedValue, setValue];
+}</code></pre>
+
+                <h2>4. 性能优化</h2>
+                <blockquote>
+                    <p>使用 useMemo 和 useCallback 可以优化组件性能，避免不必要的重渲染。</p>
+                </blockquote>
+
+                <pre><code>function ExpensiveComponent({ data }) {
+    const memoizedValue = useMemo(() => {
+        return data.map(item => item * 2);
+    }, [data]);
+
+    const handleClick = useCallback(() => {
+        console.log(memoizedValue);
+    }, [memoizedValue]);
+
+    return (
+        <button onClick={handleClick}>
+            显示结果
+        </button>
+    );
+}</code></pre>
+
+                <h2>5. Hooks 规则</h2>
+                <ul>
+                    <li>只在最顶层使用 Hooks</li>
+                    <li>只在 React 函数组件中调用 Hooks</li>
+                    <li>Hooks 调用顺序必须保持一致</li>
+                    <li>依赖数组要包含所有依赖项</li>
+                </ul>
+
+                <h2>6. 常见问题与解决方案</h2>
+                <p>使用 Hooks 时可能遇到的问题：</p>
+                <ul>
+                    <li>状态更新闭包陷阱</li>
+                    <li>useEffect 的无限循环</li>
+                    <li>状态更新的批处理</li>
+                    <li>复杂状态的管理</li>
+                </ul>
+            </div>
+        </div>
+    </article>
+
+    <script>
+        BackgroundManager.init({
+            duration: 30,
+            blur: 0.5,
+            opacity: 1
+        });
+    </script>
+    <script>
+    document.querySelector('.back-btn').addEventListener('click', (e) => {
+        e.preventDefault();
+        const transition = document.querySelector('.back-transition');
+        const rect = e.target.getBoundingClientRect();
+        const x = rect.left + rect.width / 2;
+        const y = rect.top + rect.height / 2;
+        
+        // 存储返回点位置
+        sessionStorage.setItem('returnPoint', JSON.stringify({ x, y }));
+        
+        // 设置动画起始点
+        transition.style.setProperty('--x', x + 'px');
+        transition.style.setProperty('--y', y + 'px');
+        
+        // 触发动画
+        requestAnimationFrame(() => {
+            transition.classList.add('active');
+        });
+        
+        // 延迟跳转
+        setTimeout(() => {
+            window.location.href = '../blog.html';
+        }, 800);
+    });
+    </script>
+</body>
+</html> 
